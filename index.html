@@ -8,46 +8,63 @@
 <body>
 
     <div style="width: 80%; margin: 20px auto; font-family: sans-serif;">
-        <h1>Analiza ruchu obiektu</h1>
+        <h1>Position of the box (Spring + damper)</h1>
         <canvas id="wykresRuchu"></canvas>
     </div>
 
     <script>
+        let boxMass = 10;
+        let maxTime = 100;
+        let deltaTime = 0.001;
+        let boxPos = 0;
+        let springK = 10;
+        let springNativePosition = 5;
+        let boxVel = 0;
+        let damperS = 3;
+        let t = 0;
+
+        const xData = [];
+        const yData = [];
+
+        function SpringForce(x)
+        {
+            return -springK * x;
+        }
+
+        while (t < maxTime)
+        {
+            let forceAtDt = SpringForce(boxPos - springNativePosition) - damperS * boxVel;
+
+            let dx = boxVel * deltaTime + 0.5 * (forceAtDt / boxMass) * deltaTime * deltaTime;
+            boxPos += dx;
+            boxVel = dx / deltaTime;
+
+            xData.push(t.toFixed(2) + "s");
+            yData.push(boxPos);
+
+            t += deltaTime;
+        }
+
         const ctx = document.getElementById('wykresRuchu').getContext('2d');
 
         new Chart(ctx, {
-            type: 'line', // Zmieniamy z 'bar' na 'line'
+            type: 'line',
             data: {
-                labels: ['0s', '1s', '2s', '3s', '4s', '5s', '6s'], // Oœ czasu (X)
+                labels: xData,
                 datasets: [{
-                    label: 'Pozycja x(t) [metry]',
-                    data: [0, 2, 5, 9, 14, 20, 27], // Przyk³adowe dane (ruch przyspieszony)
+                    label: 'Position of the box x(t)',
+                    data: yData,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    borderWidth: 2,
                     fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    tension: 0.3, // Dodaje lekkie wyg³adzenie linii
-                    pointRadius: 5,
-                    pointHoverRadius: 8
+                    pointRadius: 0 // Ukrywamy punkty dla p³ynnoœci linii
                 }]
             },
             options: {
-                responsive: true,
                 scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Czas [s]'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Pozycja [m]'
-                        },
-                        beginAtZero: true
-                    }
+                    x: { title: { display: true, text: 'Time [s]' } },
+                    y: { title: { display: true, text: 'position [m]' } }
                 }
             }
         });
