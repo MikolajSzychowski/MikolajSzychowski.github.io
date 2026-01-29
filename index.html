@@ -6,6 +6,38 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div class="controls">
+        <div class="control-group">
+            <label>Spring constant: </label>
+            <input type="range" id="sliderK" min="1" max="50" step="0.5" value="10">
+            <span id="valK">10</span>
+        </div>
+        <div class="control-group">
+            <label>Damper constant: </label>
+            <input type="range" id="sliderS" min="0" max="50" step="0.1" value="3">
+            <span id="valS">3</span>
+        </div>
+        <div class="control-group">
+            <label>Delta time: </label>
+            <input type="range" id="sliderT" min="0" max="0.1" step="0.001" value="0.01">
+            <span id="valdt">0.01</span>
+        </div>
+        <div class="control-group">
+            <label>Box initial position: </label>
+            <input type="range" id="sliderP" min="-10" max="10" step="0.01" value="5">
+            <span id="valP">5</span>
+        </div>
+        <div class="control-group">
+            <label>Simulation time: </label>
+            <input type="range" id="sliderTT" min="1" max="500" step="1" value="100">
+            <span id="valTT">100</span>
+        </div>
+        <div class="control-group">
+            <label>Box mass: </label>
+            <input type="range" id="sliderM" min="0.1" max="100" step="0.1" value="10">
+            <span id="valM">10</span>
+        </div>
+    </div>
 
     <div style="width: 80%; margin: 20px auto; font-family: sans-serif;">
         <h1>Position of the box (Spring + damper)</h1>
@@ -15,39 +47,67 @@
     <script>
         let boxMass = 10;
         let maxTime = 100;
-        let deltaTime = 0.001;
+        let deltaTime = 0.01;
         let boxPos = 0;
         let springK = 10;
-        let springNativePosition = 5;
+        let springNativePosition = 0;
         let boxVel = 0;
         let damperS = 3;
         let t = 0;
+        let chart;
 
-        const xData = [];
-        const yData = [];
+        let xData = [];
+        let yData = [];
 
-        function SpringForce(x)
-        {
+        function SpringForce(x) {
             return -springK * x;
         }
 
-        while (t < maxTime)
+        function updateSimulation()
         {
-            let forceAtDt = SpringForce(boxPos - springNativePosition) - damperS * boxVel;
+            springK = parseFloat(document.getElementById('sliderK').value);
+            damperS = parseFloat(document.getElementById('sliderS').value);
+            boxPos = parseFloat(document.getElementById('sliderP').value);
+            boxMass = parseFloat(document.getElementById('sliderM').value);
+            maxTime = parseFloat(document.getElementById('sliderTT').value);
+            deltaTime = parseFloat(document.getElementById('sliderT').value);
 
-            let dx = boxVel * deltaTime + 0.5 * (forceAtDt / boxMass) * deltaTime * deltaTime;
-            boxPos += dx;
-            boxVel = dx / deltaTime;
+            // Aktualizacja napisów obok suwaków
+            document.getElementById('valK').innerText = springK;
+            document.getElementById('valS').innerText = damperS;
+            document.getElementById('valP').innerText = boxPos;
+            document.getElementById('valM').innerText = boxMass;
+            document.getElementById('valTT').innerText = maxTime;
+            document.getElementById('valdt').innerText = deltaTime;
 
-            xData.push(t.toFixed(2) + "s");
-            yData.push(boxPos);
+            t = 0;
+            springNativePosition = 0;
+            yData = [];
+            xData = [];
 
-            t += deltaTime;
+            while (t < maxTime) {
+                let forceAtDt = SpringForce(boxPos - springNativePosition) - damperS * boxVel;
+
+                let dx = boxVel * deltaTime + 0.5 * (forceAtDt / boxMass) * deltaTime * deltaTime;
+                boxPos += dx;
+                boxVel = dx / deltaTime;
+
+                xData.push(t.toFixed(2) + "s");
+                yData.push(boxPos);
+
+                t += deltaTime;
+            }
+
+            chart.data.labels = xData;
+            chart.data.datasets[0].data = yData;
+            chart.update();
         }
+
+        
 
         const ctx = document.getElementById('wykresRuchu').getContext('2d');
 
-        new Chart(ctx, {
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: xData,
@@ -68,6 +128,14 @@
                 }
             }
         });
+
+        document.getElementById('sliderK').addEventListener('input', updateSimulation);
+        document.getElementById('sliderS').addEventListener('input', updateSimulation);
+        document.getElementById('sliderT').addEventListener('input', updateSimulation);
+        document.getElementById('sliderM').addEventListener('input', updateSimulation);
+        document.getElementById('sliderTT').addEventListener('input', updateSimulation);
+        document.getElementById('sliderP').addEventListener('input', updateSimulation);
+        updateSimulation();
     </script>
 
 </body>
