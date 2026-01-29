@@ -1,11 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Wykres Pozycji od Czasu</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 <body>
-    <h1>Hello World</h1>
-    <p>:D</p>
-    <canvas id="mojWykres" width="400" height="200"></canvas>
-    <script>
 
+    <div style="width: 80%; margin: 20px auto; font-family: sans-serif;">
+        <h1>Analiza ruchu obiektu</h1>
+        <canvas id="wykresRuchu"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('wykresRuchu').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line', // Zmieniamy z 'bar' na 'line'
+            data: {
+                labels: ['0s', '1s', '2s', '3s', '4s', '5s', '6s'], // Oœ czasu (X)
+                datasets: [{
+                    label: 'Pozycja x(t) [metry]',
+                    data: [0, 2, 5, 9, 14, 20, 27], // Przyk³adowe dane (ruch przyspieszony)
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    tension: 0.3, // Dodaje lekkie wyg³adzenie linii
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Czas [s]'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Pozycja [m]'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
 
 </body>
