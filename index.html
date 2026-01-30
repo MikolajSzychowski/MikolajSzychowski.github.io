@@ -43,7 +43,7 @@
         <h1>Position of the box (Spring + damper)</h1>
         <canvas id="wykresRuchu"></canvas>
     </div>
-
+    
     <script>
         let boxMass = 10;
         let maxTime = 100;
@@ -72,7 +72,6 @@
             maxTime = parseFloat(document.getElementById('sliderTT').value);
             deltaTime = parseFloat(document.getElementById('sliderT').value);
 
-            // Aktualizacja napis�w obok suwak�w
             document.getElementById('valK').innerText = springK;
             document.getElementById('valS').innerText = damperS;
             document.getElementById('valP').innerText = boxPos;
@@ -119,7 +118,7 @@
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     borderWidth: 2,
                     fill: false,
-                    pointRadius: 0 // Ukrywamy punkty dla p�ynno�ci linii
+                    pointRadius: 0
                 }]
             },
             options: {
