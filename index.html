@@ -72,7 +72,7 @@
             maxTime = parseFloat(document.getElementById('sliderTT').value);
             deltaTime = parseFloat(document.getElementById('sliderT').value);
 
-            // Aktualizacja napisów obok suwaków
+            // Aktualizacja napisï¿½w obok suwakï¿½w
             document.getElementById('valK').innerText = springK;
             document.getElementById('valS').innerText = damperS;
             document.getElementById('valP').innerText = boxPos;
@@ -84,6 +84,7 @@
             springNativePosition = 0;
             yData = [];
             xData = [];
+            boxVel = 0;
 
             while (t < maxTime) {
                 let forceAtDt = SpringForce(boxPos - springNativePosition) - damperS * boxVel;
@@ -118,7 +119,7 @@
                     backgroundColor: 'rgba(54, 162, 235, 0.1)',
                     borderWidth: 2,
                     fill: false,
-                    pointRadius: 0 // Ukrywamy punkty dla p³ynnoœci linii
+                    pointRadius: 0 // Ukrywamy punkty dla pï¿½ynnoï¿½ci linii
                 }]
             },
             options: {
